@@ -1,16 +1,17 @@
 {
   "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
-  "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "displayName": "Brunner EAS",
+  "name": "homebridge-brunner-eas",
+  "version": "0.2.0",
+  "author": "krischan1410",
+  "description": "Providing read access to the temperature sensor of Brunner EAS.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git+https://github.com/krischan1410/homebridge-brunner-eas.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/krischan1410/homebridge-brunner-eas/issues"
   },
   "engines": {
     "node": "^18.17.0 || ^20.9.0",
@@ -36,5 +37,8 @@
     "rimraf": "^5.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "xml-js": "^1.6.11"
   }
 }
