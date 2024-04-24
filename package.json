@@ -1,5 +1,4 @@
 {
-  "private": true,
   "displayName": "Brunner EAS",
   "name": "homebridge-brunner-eas",
   "version": "0.2.0",
