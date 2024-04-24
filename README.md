@@ -11,7 +11,6 @@
 </span>
 
 This is a simple Homebridge plugin providing access to the EAS device of Brunner (Elektrische Abbrand-Steuerung = Electric Burndown Control). It implements a single accessory, the temparature sensor located inside the oven.
-### Watch For Changes and Build Automatically
 
 
 ### Customise Plugin
