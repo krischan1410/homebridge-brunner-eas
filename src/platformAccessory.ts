@@ -34,11 +34,12 @@ export class BrunnerEASPlatformAccessory {
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/TemperatureSensor
 
-    // register handlers for the On/Off Characteristic
+    // register handlers for the On/Off Characteristic. Also adjust the maximum temperature.
     this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-      .onGet(this.getCurrentTemperature.bind(this)); // GET - bind to the `getOn` method below
+      .onGet(this.getCurrentTemperature.bind(this)) // GET - bind to the `getOn` method below
+      .setProps({ maxValue: 600 });
 
-    // Updating characteristics values asynchronouslyby starting the listener service.
+    // Updating characteristics values asynchronously by starting the listener service.
     this.platform.log.warn('Now starting listener at port ' + this.platform.config.port);
     this.listener = new EASBroadcastListener(this.platform.config, this.platform.log, this.updateTemperature);
   }
