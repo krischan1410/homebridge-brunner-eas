@@ -11,10 +11,10 @@ export interface Status {
   vers: string;
   verp: string;
   bits: number;
-  temparature: number;
+  temperature: number;
   burnOffStage: Stage;
   lastStageChange?: Date;
-  lastTemparatureChange?: Date;
+  lastTemperatureChange?: Date;
 }
 
 const getStage = (value: string): Stage => {
@@ -56,11 +56,11 @@ export const mergeStatus = (status: Status, stage: string, values: string[]): bo
   status.bits = ~parseInt(values[9], 2); // 0
   // status.??? = values[10]; // 0
   // status.??? = values[11]; // 0
-  const newTemparature = parseInt(values[12]); // 22
-  if (status.temparature !== newTemparature) {
+  const newTemperature = parseInt(values[12]); // 22
+  if (status.temperature !== newTemperature) {
     somethingChanged = true;
-    status.temparature = newTemparature;
-    status.lastTemparatureChange = new Date();
+    status.temperature = newTemperature;
+    status.lastTemperatureChange = new Date();
   }
   // status.??? = values[13]; // 31
   // status.??? = values[14]; // <empty>

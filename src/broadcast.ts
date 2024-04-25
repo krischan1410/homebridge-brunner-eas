@@ -9,16 +9,16 @@ export class EASBroadcastListener {
 
   private DEFAULT_PORT = 45454;
 
-  private status: Status = { temparature: 18 } as Status;
+  private status: Status = { temperature: 18 } as Status;
 
-  get temparature(): number {
-    return this.status.temparature;
+  get temperature(): number {
+    return this.status.temperature;
   }
 
   constructor(
     config: PlatformConfig,
     private logger: Logger,
-    private temparatureSetter: (newTemparature: number) => void,
+    private temperatureSetter: (newTemperature: number) => void,
   ) {
     const server = createSocket('udp4');
     server.bind(config.port ?? this.DEFAULT_PORT);
@@ -59,8 +59,8 @@ export class EASBroadcastListener {
 
     // Merge the new values into current status.
     if (mergeStatus(this.status, stage, values)) {
-      this.logger.info('Geänderte Temperatur ' + this.status.temparature + ' oder Abbrandstufe ' + this.status.burnOffStage);
-      this.temparatureSetter(this.status.temparature);
+      this.logger.info('Geänderte Temperatur ' + this.status.temperature + ' oder Abbrandstufe ' + this.status.burnOffStage);
+      this.temperatureSetter(this.status.temperature);
     }
   };
 

@@ -32,24 +32,23 @@ export class BrunnerEASPlatformAccessory {
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
 
     // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://developers.homebridge.io/#/service/TemparatureSensor
+    // see https://developers.homebridge.io/#/service/TemperatureSensor
 
     // register handlers for the On/Off Characteristic
     this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
-      .onGet(this.getCurrentTemparature.bind(this)); // GET - bind to the `getOn` method below
+      .onGet(this.getCurrentTemperature.bind(this)); // GET - bind to the `getOn` method below
 
     // Updating characteristics values asynchronouslyby starting the listener service.
     this.platform.log.warn('Now starting listener at port ' + this.platform.config.port);
-    this.listener = new EASBroadcastListener(this.platform.config, this.platform.log, this.updateTemparature);
+    this.listener = new EASBroadcastListener(this.platform.config, this.platform.log, this.updateTemperature);
   }
 
   /**
    *
-   * @param newTemparature
+   * @param newTemperature
    */
-  private updateTemparature: (newTemparature: number) => void = newTemparature => {
-    this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, newTemparature);
-  };
+  private updateTemperature: (newTemperature: number) => void = newTemperature =>
+    this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, newTemperature);
 
   /**
    * Handle the "GET" requests from HomeKit
@@ -58,15 +57,14 @@ export class BrunnerEASPlatformAccessory {
    * GET requests should return as fast as possible. A long delay here will result in
    * HomeKit being unresponsive and a bad user experience in general.
    */
-  async getCurrentTemparature(): Promise<CharacteristicValue> {
-    // implement your own code to check if the device is on
-    const currentTemparature = this.listener.temparature;
+  async getCurrentTemperature(): Promise<CharacteristicValue> {
+    const currentTemperature = this.listener.temperature;
 
-    this.platform.log.debug('Get Characteristic CurrentTemparature ->', currentTemparature);
+    this.platform.log.debug('Get Characteristic CurrentTemperature ->', currentTemperature);
 
     // if you need to return an error to show the device as "Not Responding" in the Home app:
     // throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
 
-    return currentTemparature;
+    return currentTemperature;
   }
 }
