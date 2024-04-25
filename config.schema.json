@@ -1,16 +1,33 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "BrunnerEAS",
   "pluginType": "platform",
   "singular": true,
+  "headerDisplay": "Homebridge plugin for Brunner EAS.",
+  "footerDisplay": "For additonal information visit [Plugin Homepage](https://github.com/krischan1410/homebridge-brunner-eas).",
   "schema": {
     "type": "object",
     "properties": {
       "name": {
         "title": "Name",
+        "description": "Plugin name as displayed in the Homebridge log.",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
-      }
+        "default": "Brunner EAS"
+      },
+      "accessoryName": {
+        "title": "Accessory Name",
+        "description": "Name of the EAS device as shown in Home app",
+        "type": "string",
+        "required": true,
+        "default": "Brunner EAS"
+      },
+      "port": {
+        "title": "Port",
+        "description": "Port number used to listen to the EAS broadcast service. The default most probably fit.",
+        "type": "integer",
+        "required": true,
+        "default": 45454
+      }      
     }
   }
 }

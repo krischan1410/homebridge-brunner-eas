@@ -15,4 +15,7 @@ This is a simple Homebridge plugin providing access to the EAS device of Brunner
 
 ### Customise Plugin
 
-Currently there is not that much to configure. The next versions will introduce the name of the device and the port to listen as settings, currently they are fixed to "Brunner EAS" and 45454, which should fit the normal usage with just one device in the house.  
+You can configure three properties of this is plugin.
++ The `name` of the platform as used in the logs of Homebridge. The default value most probably fits.
++ The `accessoryName` of the EAS device. You may accept the default value, but feel free to change it to something personal, because this name is visibly in Home app.
++ The `port` number that this plugin listens to. This should fit - you shouöd only change it if your EAS device broadcasts to a different port.

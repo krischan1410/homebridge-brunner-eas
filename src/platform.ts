@@ -20,6 +20,11 @@ export class BrunnerEASHomebridgePlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+    if (!config) {
+      this.log.error('Cannot find configuration for the plugin');
+      return;
+    }
+
     this.log.debug('Finished initializing platform:', this.config.name);
 
     // Homebridge 1.8.0 introduced a `log.success` method that can be used to log success messages
@@ -58,7 +63,10 @@ export class BrunnerEASHomebridgePlatform implements DynamicPlatformPlugin {
   startService() {
 
     // register device if it has not already been registered
-    const device = { uniqueId: 'brunner-eas-device-0', displayName: 'Brunner EAS' };
+    const device = {
+      uniqueId: 'brunner-eas-device-0',
+      displayName: this.config.accessoryName,
+    };
 
     // generate a unique id for the accessory this should be generated from
     // something globally unique, but constant, for example, the device serial
