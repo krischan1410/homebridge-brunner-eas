@@ -7,14 +7,15 @@ export interface Status {
   displayLightness: number;
   buzzer: number;
   stokeHint: StokeHint;
+  refillNow: boolean;
   dros: boolean;
   vers: string;
   verp: string;
-  bits: number;
   temperature: number;
   burnOffStage: Stage;
   lastStageChange?: Date;
   lastTemperatureChange?: Date;
+  lastRefillNowChange?: Date;
 }
 
 const getStage = (value: string): Stage => {
@@ -53,7 +54,14 @@ export const mergeStatus = (status: Status, stage: string, values: string[]): bo
   status.dros = values[6] === '1'; // 0
   status.vers = values[7]; // 331
   status.verp = values[8]; // 2
-  status.bits = ~parseInt(values[9], 2); // 0
+
+  const newRefillNow = parseInt(values[9]) === 16; // 0
+  if (newRefillNow !== status.refillNow) {
+    somethingChanged = true;
+    status.refillNow = newRefillNow;
+    status.lastRefillNowChange = new Date();
+  }
+
   // status.??? = values[10]; // 0
   // status.??? = values[11]; // 0
   const newTemperature = parseInt(values[12]); // 22
@@ -62,8 +70,10 @@ export const mergeStatus = (status: Status, stage: string, values: string[]): bo
     status.temperature = newTemperature;
     status.lastTemperatureChange = new Date();
   }
+
   // status.??? = values[13]; // 31
   // status.??? = values[14]; // <empty>
+
   if (status.burnOffStage !== getStage(stage)) {
     somethingChanged = true;
     status.burnOffStage = getStage(stage);

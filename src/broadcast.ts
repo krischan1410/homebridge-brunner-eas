@@ -43,6 +43,7 @@ export class EASBroadcastListener {
   private readMessage: (message: Buffer) => void = message => {
     // EAS sends a null-terminated string buffer, so better remove everything after (including) the \0 char.
     const xml = message.toString().replace(/\0.*$/, '').trim();
+    this.logger.debug(xml);
 
     // Convert the sent XML to JSON and filter for "bdle" objects (thus ignoring "d" objects).
     const root = xml2js(xml).elements[0];
@@ -56,10 +57,12 @@ export class EASBroadcastListener {
     if (!stage || values.length < 14) {
       return;
     }
+    this.logger.debug(JSON.stringify(values));
 
     // Merge the new values into current status.
     if (mergeStatus(this.status, stage, values)) {
       this.logger.info('Geänderte Temperatur ' + this.status.temperature + ' oder Abbrandstufe ' + this.status.burnOffStage);
+      this.logger.debug(JSON.stringify(this.status));
       this.temperatureSetter(this.status.temperature);
     }
   };
