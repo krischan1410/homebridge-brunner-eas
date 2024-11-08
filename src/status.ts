@@ -13,10 +13,12 @@ export interface Status {
   verp: string;
   temperature: number;
   burnOffStage: Stage;
-  lastStageChange?: Date;
-  lastTemperatureChange?: Date;
-  lastRefillNowChange?: Date;
 }
+
+export const defaultStatus = {
+  temperature: 18,
+  refillNow: false,
+} as Status;
 
 const getStage = (value: string): Stage => {
   switch (value) {
@@ -41,8 +43,8 @@ const getStokeHint = (value: string): StokeHint => {
   }
 };
 
-export const mergeStatus = (status: Status, stage: string, values: string[]): boolean => {
-  let somethingChanged = false;
+export const readStatus = (stage: string, values: string[]): Status => {
+  const status = {} as Status;
 
   // '0', '1', '1', '80', '2',  '4',  '0', '331', '2',  '0',  '0', '0', '22', '31', ''
   status.extendedBurnOff = values[0] === '1';  // 0
@@ -54,31 +56,13 @@ export const mergeStatus = (status: Status, stage: string, values: string[]): bo
   status.dros = values[6] === '1'; // 0
   status.vers = values[7]; // 331
   status.verp = values[8]; // 2
-
-  const newRefillNow = parseInt(values[9]) === 16; // 0
-  if (newRefillNow !== status.refillNow) {
-    somethingChanged = true;
-    status.refillNow = newRefillNow;
-    status.lastRefillNowChange = new Date();
-  }
-
+  status.refillNow = parseInt(values[10]) === 16; // 0
   // status.??? = values[10]; // 0
   // status.??? = values[11]; // 0
-  const newTemperature = parseInt(values[12]); // 22
-  if (status.temperature !== newTemperature) {
-    somethingChanged = true;
-    status.temperature = newTemperature;
-    status.lastTemperatureChange = new Date();
-  }
-
+  status.temperature = parseInt(values[12]); // 22
   // status.??? = values[13]; // 31
   // status.??? = values[14]; // <empty>
+  status.burnOffStage = getStage(stage);
 
-  if (status.burnOffStage !== getStage(stage)) {
-    somethingChanged = true;
-    status.burnOffStage = getStage(stage);
-    status.lastStageChange = new Date();
-  }
-
-  return somethingChanged;
+  return status;
 };

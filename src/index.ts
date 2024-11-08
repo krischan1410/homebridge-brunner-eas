@@ -1,11 +1,11 @@
 import { API } from 'homebridge';
 
 import { PLATFORM_NAME } from './settings';
-import { BrunnerEASHomebridgePlatform } from './platform';
+import { EASPlatform } from './eas-platform';
 
 /**
  * This method registers the platform with Homebridge
  */
 export = (api: API) => {
-  api.registerPlatform(PLATFORM_NAME, BrunnerEASHomebridgePlatform);
+  api.registerPlatform(PLATFORM_NAME, EASPlatform);
 };

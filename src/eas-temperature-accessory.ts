@@ -1,20 +1,23 @@
 import { Service, PlatformAccessory, CharacteristicValue } from 'homebridge';
 
-import { BrunnerEASHomebridgePlatform } from './platform';
-import { EASBroadcastListener } from './broadcast';
+import { EASPlatform } from './eas-platform';
+import { EASBroadcastReceiver } from './eas-broadcast-receiver';
+import { EASAccessory } from './eas-accessory';
+
+export const uniqueId = 'brunner-eas-device-0';
 
 /**
  * Platform Accessory
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class BrunnerEASPlatformAccessory {
+export class EASTemperatureAccessory implements EASAccessory {
   private service: Service;
-  private listener: EASBroadcastListener;
 
   constructor(
-    private readonly platform: BrunnerEASHomebridgePlatform,
+    private readonly platform: EASPlatform,
     private readonly accessory: PlatformAccessory,
+    private broadcastReceiver: EASBroadcastReceiver,
   ) {
 
     // set accessory information
@@ -38,17 +41,13 @@ export class BrunnerEASPlatformAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.CurrentTemperature)
       .onGet(this.getCurrentTemperature.bind(this)) // GET - bind to the `getOn` method below
       .setProps({ maxValue: 800 });
-
-    // Updating characteristics values asynchronously by starting the listener service.
-    this.platform.log.warn('Now starting listener at port ' + this.platform.config.port);
-    this.listener = new EASBroadcastListener(this.platform.config, this.platform.log, this.updateTemperature);
   }
 
   /**
    *
    * @param newTemperature
    */
-  private updateTemperature: (newTemperature: number) => void = newTemperature =>
+  public updateTemperature: (newTemperature: number) => void = newTemperature =>
     this.service.updateCharacteristic(this.platform.Characteristic.CurrentTemperature, newTemperature);
 
   /**
@@ -59,13 +58,17 @@ export class BrunnerEASPlatformAccessory {
    * HomeKit being unresponsive and a bad user experience in general.
    */
   async getCurrentTemperature(): Promise<CharacteristicValue> {
-    const currentTemperature = this.listener.temperature;
-
+    const currentTemperature = this.broadcastReceiver.temperature;
     this.platform.log.debug('Get Characteristic CurrentTemperature ->', currentTemperature);
-
-    // if you need to return an error to show the device as "Not Responding" in the Home app:
-    // throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
-
     return currentTemperature;
   }
+
+  /**
+   *
+   * @param newVersion
+   */
+  public updateVersion: (newVersion: string) => void = newVersion => {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
+  };
 }

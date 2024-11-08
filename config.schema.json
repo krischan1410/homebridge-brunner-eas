@@ -31,7 +31,8 @@
       "refillHint": {
         "title": "Refill Hint",
         "description": "If not empty, it defines the name of a read-only switch which is set to On when the refill hint is active.",
-        "type": "string"
+        "type": "string",
+        "default": "Nachfüllhinweis"
       }      
     }
   }
