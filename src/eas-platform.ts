@@ -1,5 +1,4 @@
-import { API, DynamicPlatformPlugin, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
-import { Logger } from 'homebridge/lib/logger';
+import { API, DynamicPlatformPlugin, PlatformAccessory, PlatformConfig, Service, Characteristic, Logger } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { EASTemperatureAccessory, uniqueId as temperatureUniqueId } from './eas-temperature-accessory';
@@ -36,14 +35,6 @@ export class EASPlatform implements DynamicPlatformPlugin {
     }
 
     this.log.debug('Finished initializing platform:', this.config.name);
-
-    // Homebridge 1.8.0 introduced a `log.success` method that can be used to log success messages
-    // For users that are on a version prior to 1.8.0, we need a 'polyfill' for this method
-    if (!log.success) {
-      log.success = log.info;
-    }
-
-    Logger.setDebugEnabled(false);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -125,6 +116,9 @@ export class EASPlatform implements DynamicPlatformPlugin {
     if (refillHintAccessory) {
       this.broadcastReceiver.addRefillHintListener(
         newRefillHint => refillHintAccessory.updateRefillHint(newRefillHint),
+      );
+      this.broadcastReceiver.addVersionListener(
+        newVersion => refillHintAccessory.updateVersion(newVersion),
       );
     }
   }

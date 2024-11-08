@@ -52,6 +52,15 @@ export class EASRefillHintAccessory implements EASAccessory {
     this.service.getCharacteristic(this.platform.Characteristic.On).updateValue(newRefillHint);
 
   /**
+   *
+   * @param newVersion
+   */
+  public updateVersion: (newVersion: string) => void = newVersion => {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
+  };
+
+  /**
    * Handle the "GET" requests from HomeKit
    * These are sent when HomeKit wants to know the current state of the accessory, for example, checking if a Light bulb is on.
    *
