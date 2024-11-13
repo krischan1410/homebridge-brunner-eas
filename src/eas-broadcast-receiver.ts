@@ -27,6 +27,10 @@ export class EASBroadcastReceiver {
     return this.status.refillNow;
   }
 
+  get burnOffStage(): Stage {
+    return this.status.burnOffStage;
+  }
+
   constructor(
     config: PlatformConfig,
     private logger: Logger,

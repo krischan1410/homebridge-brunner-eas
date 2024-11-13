@@ -13,6 +13,7 @@ export const uniqueId = 'brunner-eas-device-0';
  */
 export class EASTemperatureAccessory implements EASAccessory {
   private service: Service;
+  private infoService: Service;
 
   constructor(
     private readonly platform: EASPlatform,
@@ -21,10 +22,9 @@ export class EASTemperatureAccessory implements EASAccessory {
   ) {
 
     // set accessory information
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Brunner')
-      .setCharacteristic(this.platform.Characteristic.Model, 'EAS')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, '<unknown>');
+    this.infoService = this.accessory.getService(this.platform.Service.AccessoryInformation)!;
+    this.infoService.setCharacteristic(this.platform.Characteristic.Manufacturer, 'Brunner');
+    this.infoService.setCharacteristic(this.platform.Characteristic.Model, 'EAS');
 
     // get the TemperatureSensor service if it exists, otherwise create a new TemperatureSensor service
     this.service = this.accessory.getService(this.platform.Service.TemperatureSensor)
@@ -68,7 +68,6 @@ export class EASTemperatureAccessory implements EASAccessory {
    * @param newVersion
    */
   public updateVersion: (newVersion: string) => void = newVersion => {
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
+    this.infoService.setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
   };
 }

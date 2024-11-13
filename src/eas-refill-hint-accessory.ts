@@ -13,6 +13,7 @@ export const uniqueId = 'brunner-eas-device-1';
  */
 export class EASRefillHintAccessory implements EASAccessory {
   private service: Service;
+  private infoService: Service;
 
   constructor(
     private readonly platform: EASPlatform,
@@ -21,10 +22,9 @@ export class EASRefillHintAccessory implements EASAccessory {
   ) {
 
     // set accessory information
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Brunner')
-      .setCharacteristic(this.platform.Characteristic.Model, 'EAS')
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, '<unknown>');
+    this.infoService = this.accessory.getService(this.platform.Service.AccessoryInformation)!;
+    this.infoService.setCharacteristic(this.platform.Characteristic.Manufacturer, 'Brunner');
+    this.infoService.setCharacteristic(this.platform.Characteristic.Model, 'EAS');
 
     // get the Switch service if it exists, otherwise create a new Switch service
     this.service = this.accessory.getService(this.platform.Service.Switch)
@@ -36,7 +36,7 @@ export class EASRefillHintAccessory implements EASAccessory {
 
     // each service must implement at-minimum the "required characteristics" for the given service type
     // see https://developers.homebridge.io/#/service/Switch
-    this.platform.log.info('First calue of On: ' + this.service.getCharacteristic(this.platform.Characteristic.On).value);
+    this.platform.log.info('First value of On: ' + this.service.getCharacteristic(this.platform.Characteristic.On).value);
 
     // register handlers for the current On Characteristic.
     this.service.getCharacteristic(this.platform.Characteristic.On)
@@ -49,15 +49,14 @@ export class EASRefillHintAccessory implements EASAccessory {
    * @param newBurnOffStage
    */
   public updateRefillHint: (newRefillHint: boolean) => void = newRefillHint =>
-    this.service.getCharacteristic(this.platform.Characteristic.On).updateValue(newRefillHint);
+    this.service.updateCharacteristic(this.platform.Characteristic.On, newRefillHint);
 
   /**
    *
    * @param newVersion
    */
   public updateVersion: (newVersion: string) => void = newVersion => {
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
+    this.infoService.setCharacteristic(this.platform.Characteristic.FirmwareRevision, newVersion);
   };
 
   /**
@@ -82,7 +81,7 @@ export class EASRefillHintAccessory implements EASAccessory {
     const realValue = this.broadcastReceiver.refillHint;
     this.platform.log.debug(`Dont't touch this, newValue: ${newValue}, realValue: ${realValue}`);
     if (newValue !== realValue) {
-      setTimeout(() => this.updateRefillHint(realValue), 1000);
+      setTimeout(() => this.service.setCharacteristic(this.platform.Characteristic.On, realValue), 1000);
     }
   }
 }
