@@ -1,7 +1,7 @@
 {
   "displayName": "Brunner EAS",
   "name": "homebridge-brunner-eas",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "krischan1410",
   "description": "Providing read access to the temperature sensor of Brunner EAS.",
   "license": "Apache-2.0",

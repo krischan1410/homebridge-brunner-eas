@@ -26,30 +26,50 @@ export class EASRefillHintAccessory implements EASAccessory {
     this.infoService.setCharacteristic(this.platform.Characteristic.Manufacturer, 'Brunner');
     this.infoService.setCharacteristic(this.platform.Characteristic.Model, 'EAS');
 
-    // get the Switch service if it exists, otherwise create a new Switch service
-    this.service = this.accessory.getService(this.platform.Service.Switch)
-                || this.accessory.addService(this.platform.Service.Switch);
+    // Look up configuration of service type
+    const serviceType = this.platform.config.hintAsSensor
+      ? this.platform.Service.ContactSensor
+      : this.platform.Service.Switch;
+    // get the service if it exists, otherwise create a new service
+    this.service = this.accessory.getService(serviceType)
+                || this.accessory.addService(serviceType);
+
+    // Remove any existing stale service.
+    const otherServiceType = this.platform.config.hintAsSensor
+      ? this.platform.Service.Switch
+      : this.platform.Service.ContactSensor;
+    const staleService = this.accessory.getService(otherServiceType);
+    if (staleService) {
+      this.accessory.removeService(staleService);
+    }
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
 
-    // each service must implement at-minimum the "required characteristics" for the given service type
-    // see https://developers.homebridge.io/#/service/Switch
-    this.platform.log.info('First value of On: ' + this.service.getCharacteristic(this.platform.Characteristic.On).value);
-
-    // register handlers for the current On Characteristic.
-    this.service.getCharacteristic(this.platform.Characteristic.On)
-      .onGet(this.getCurrentRefillHint.bind(this))
-      .onSet(this.dontTouchIt.bind(this));
+    // register handlers for the current On/ContactSensorState Characteristic.
+    if (this.platform.config.hintAsSensor) {
+      this.service.getCharacteristic(this.platform.Characteristic.ContactSensorState)
+        .onGet(this.getCurrentRefillHint.bind(this));
+    } else {
+      this.service.getCharacteristic(this.platform.Characteristic.On)
+        .onGet(this.getCurrentRefillHint.bind(this))
+        .onSet(this.dontTouchIt.bind(this));
+    }
   }
 
   /**
    *
    * @param newBurnOffStage
    */
-  public updateRefillHint: (newRefillHint: boolean) => void = newRefillHint =>
-    this.service.updateCharacteristic(this.platform.Characteristic.On, newRefillHint);
+  public updateRefillHint: (newRefillHint: boolean) => void = newRefillHint => {
+    if (this.platform.config.hintAsSensor) {
+      this.service.updateCharacteristic(this.platform.Characteristic.ContactSensorState,
+        this.toSensorState(newRefillHint));
+    } else {
+      this.service.updateCharacteristic(this.platform.Characteristic.On, newRefillHint);
+    }
+  };
 
   /**
    *
@@ -67,13 +87,11 @@ export class EASRefillHintAccessory implements EASAccessory {
    * HomeKit being unresponsive and a bad user experience in general.
    */
   async getCurrentRefillHint(): Promise<CharacteristicValue> {
-    const currentRefillHint = this.broadcastReceiver.refillHint;
+    const currentRefillHint = this.platform.config.hintAsSensor
+      ? this.toSensorState(this.broadcastReceiver.refillHint)
+      : this.broadcastReceiver.refillHint;
 
     this.platform.log.debug('Get Characteristic CurrentRefillHint ->', currentRefillHint);
-
-    // if you need to return an error to show the device as "Not Responding" in the Home app:
-    // throw new this.platform.api.hap.HapStatusError(this.platform.api.hap.HAPStatus.SERVICE_COMMUNICATION_FAILURE);
-
     return currentRefillHint;
   }
 
@@ -84,4 +102,11 @@ export class EASRefillHintAccessory implements EASAccessory {
       setTimeout(() => this.service.setCharacteristic(this.platform.Characteristic.On, realValue), 1000);
     }
   }
+
+  private toSensorState(contact: boolean): number {
+    return contact
+      ? this.platform.Characteristic.ContactSensorState.CONTACT_DETECTED
+      : this.platform.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
+  }
 }
+

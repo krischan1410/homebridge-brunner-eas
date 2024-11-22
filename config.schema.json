@@ -33,6 +33,12 @@
         "description": "If not empty, it defines the name of a read-only switch which is set to On when the refill hint is active.",
         "type": "string",
         "default": "Nachfüllhinweis"
+      },
+      "hintAsSensor": {
+        "title": "Show Hint as a Contact Sensor",
+        "description": "If true, the refill hint is shown as a contact sensor (which is closed if hint is active) instead of a switch.",
+        "type": "boolean",
+        "default": false
       }      
     }
   }
