@@ -114,15 +114,13 @@ export class EASBroadcastReceiver {
 
     // Extract the attribute "stat" from root element and split the semicolon separated value of "text" subelement.
     const stage = root.attributes.stat;
-    const values = root.elements[0]?.text?.split(';') as string[];
+    const values = (root.elements[0]?.text?.split(';') ?? []) as string[];
     if (!stage || values.length < 14) {
       return;
     }
 
     // Read and compare the new values with current status.
-    this.logger.debug(JSON.stringify(values));
     const newStatus = readStatus(stage, values);
-    this.logger.debug(JSON.stringify(this.status));
 
     if (this.status.temperature !== newStatus.temperature) {
       this.logger.info('Geänderte Temperatur ' + newStatus.temperature);
@@ -133,7 +131,7 @@ export class EASBroadcastReceiver {
       this.burnOffStageListeners.forEach(setBurnOffStage => setBurnOffStage(newStatus.burnOffStage));
     }
     if (this.status.refillNow !== newStatus.refillNow) {
-      this.logger.info('Geänderte Nachfüllhinweis ' + newStatus.refillNow);
+      this.logger.info('Geänderter Nachfüllhinweis ' + newStatus.refillNow);
       this.refillHintListeners.forEach(setRefillHint => setRefillHint(newStatus.refillNow));
     }
     if (this.status.vers !== newStatus.vers) {

@@ -1,7 +1,7 @@
 {
   "displayName": "Brunner EAS",
   "name": "homebridge-brunner-eas",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "krischan1410",
   "description": "Providing read access to the temperature sensor of Brunner EAS.",
   "license": "Apache-2.0",
@@ -13,7 +13,7 @@
     "url": "https://github.com/krischan1410/homebridge-brunner-eas/issues"
   },
   "engines": {
-    "node": "^18.17.0 || ^20.9.0 || ^22.11.0",
+    "node": "^18.20.4 || ^20.15.1 || ^22 || ^24",
     "homebridge": "^1.6.0 || ^2.0.0-beta.0"
   },
   "main": "dist/index.js",
